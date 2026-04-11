@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planes — Folio</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .plans-page {
+      background: var(--canvas);
+      min-height: 100vh;
+    }
+    .plans-nav {
+      background: var(--primary-deep);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+      gap: 24px;
+    }
+    .plans-nav a {
+      color: rgba(212,232,223,.7);
+      text-decoration: none;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+    .plans-nav a:hover { color: var(--white); }
+    .plans-hero {
+      background: var(--primary-deep);
+      padding: 64px 40px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212,232,223,.15);
+      border: 1px solid rgba(212,232,223,.3);
+      color: var(--primary-tint);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .plans-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 44px;
+      color: var(--white);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .plans-sub {
+      font-size: 18px;
+      color: var(--primary-tint);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .plans-container {
+      max-width: 1100px;
+      margin: -20px auto 0;
+      padding: 0 40px 60px;
+      position: relative;
+      z-index: 1;
+    }
+    .billing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 32px 0 36px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--slate);
+    }
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: var(--primary-mid);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .toggle-knob {
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: var(--transition);
+    }
+    .toggle-switch.annual .toggle-knob { left: 23px; }
+    .save-badge {
+      background: var(--accent-tint);
+      color: var(--accent-deep);
+      border: 1px solid var(--accent-mid);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .waitlist-section {
+      background: var(--primary-deep);
+      border-radius: var(--radius-lg);
+      padding: 56px 48px;
+      text-align: center;
+      margin-top: 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    .waitlist-section::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(196,119,59,.12);
+    }
+    .waitlist-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 34px;
+      color: var(--white);
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .waitlist-sub {
+      font-size: 16px;
+      color: var(--primary-tint);
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .waitlist-form {
+      display: flex;
+      gap: 12px;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .waitlist-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(212,232,223,.3);
+      background: rgba(255,255,255,.1);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .waitlist-input::placeholder { color: rgba(212,232,223,.5); }
+    .waitlist-input:focus { border-color: rgba(212,232,223,.7); background: rgba(255,255,255,.15); }
+    .waitlist-success {
+      display: none;
+      background: var(--primary-mid);
+      border-radius: var(--radius);
+      padding: 16px 24px;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 500;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .waitlist-counter {
+      font-size: 13px;
+      color: rgba(212,232,223,.6);
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .faq-section { margin-top: 56px; max-width: 700px; margin-left: auto; margin-right: auto; }
+    .faq-item {
+      border-bottom: 1px solid var(--stone);
+      padding: 20px 0;
+    }
+    .faq-q {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-deep);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .faq-a {
+      font-size: 14px;
+      color: var(--slate);
+      margin-top: 10px;
+      line-height: 1.7;
+      display: none;
+    }
+    .faq-a.open { display: block; }
+  </style>
+</head>
+<body class="plans-page">
+
+  <!-- Nav -->
+  <nav class="plans-nav">
+    <a href="dashboard.html" class="navbar-logo" style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--white);text-decoration:none;">Folio.</a>
+    <div style="flex:1;"></div>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="dashboard.html" class="btn btn-secondary btn-sm" style="background:rgba(255,255,255,.1);border-color:rgba(212,232,223,.3);color:var(--primary-tint);">Volver al dashboard</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="plans-hero">
+    <div class="success-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      ¡Tu primera ficha técnica fue generada con éxito!
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:24px;">
+      <a href="sample-ficha.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(212,232,223,.3);color:var(--primary-tint);padding:9px 18px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:180ms;" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Ver ficha técnica de ejemplo
+      </a>
+      <a href="sample-ficha-desarrollo.html" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:rgba(196,119,59,.25);border:1px solid rgba(196,119,59,.5);color:#F5DEC8;padding:9px 18px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:180ms;" onmouseover="this.style.background='rgba(196,119,59,.4)'" onmouseout="this.style.background='rgba(196,119,59,.25)'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Ver ficha con desarrollo incluido
+      </a>
+    </div>
+    <div class="plans-title">Elige el plan que se adapta<br>a tu negocio</div>
+    <p class="plans-sub">Desde brokers independientes hasta agencias. Sin compromisos — cancela cuando quieras.</p>
+  </div>
+
+  <!-- Plans container -->
+  <div class="plans-container">
+
+    <!-- Billing toggle -->
+    <div class="billing-toggle">
+      <span>Mensual</span>
+      <div class="toggle-switch annual" id="toggle" onclick="toggleBilling()"><div class="toggle-knob"></div></div>
+      <span style="color:var(--primary-deep);font-weight:600;">Anual</span>
+      <span class="save-badge">Ahorra 29%</span>
+    </div>
+
+    <!-- Plan grid -->
+    <div class="grid-4">
+
+      <!-- Por Uso -->
+      <div class="plan-card">
+        <div class="plan-name">Por Uso</div>
+        <div class="plan-price" id="price-peruse">$99 <span>MXN / ficha</span></div>
+        <div class="plan-desc">Sin suscripción. Paga solo cuando generas una ficha técnica.</div>
+        <ul class="plan-features">
+          <li>1 ficha por pago</li>
+          <li>Hasta 5 propiedades activas</li>
+          <li>150 MB por propiedad</li>
+          <li>MiniSite público incluido</li>
+          <li>Soporte por email</li>
+        </ul>
+        <button class="btn btn-secondary" style="width:100%;justify-content:center;" onclick="joinWaitlist()">Unirse a lista de espera</button>
+      </div>
+
+      <!-- Mensual Pro -->
+      <div class="plan-card featured">
+        <div class="plan-popular">⭐ Más popular</div>
+        <div class="plan-name">Mensual Pro</div>
+        <div class="plan-price" id="price-monthly">$699 <span>MXN / mes</span></div>
+        <div class="plan-desc">Fichas ilimitadas para brokers activos. La opción más elegida.</div>
+        <ul class="plan-features">
+          <li>Fichas ilimitadas</li>
+          <li>Propiedades ilimitadas</li>
+          <li>300 MB por propiedad</li>
+          <li>MiniSite público incluido</li>
+          <li>Historial de versiones</li>
+          <li>Soporte prioritario</li>
+        </ul>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="joinWaitlist()">Unirse a lista de espera</button>
+      </div>
+
+      <!-- Anual Pro -->
+      <div class="plan-card">
+        <div class="plan-name">Anual Pro</div>
+        <div class="plan-price" id="price-annual">$499 <span>MXN / mes</span></div>
+        <div class="plan-desc" id="desc-annual">Todo lo del plan Mensual Pro. Facturado anualmente ($5,988 MXN).</div>
+        <ul class="plan-features">
+          <li>Todo lo del Plan Pro</li>
+          <li>Ahorra $2,400 MXN al año</li>
+          <li>300 MB por propiedad</li>
+          <li>Factura fiscal anual</li>
+          <li>Historial de versiones</li>
+          <li>Soporte prioritario</li>
+        </ul>
+        <button class="btn btn-accent" style="width:100%;justify-content:center;" onclick="joinWaitlist()">
+          Unirse a lista de espera
+        </button>
+      </div>
+
+      <!-- Agencia -->
+      <div class="plan-card">
+        <div class="plan-name">Agencia</div>
+        <div class="plan-price" id="price-agency">$1,899 <span>MXN / mes</span></div>
+        <div class="plan-desc">Para equipos de hasta 5 agentes con branding corporativo unificado.</div>
+        <ul class="plan-features">
+          <li>Todo lo del Plan Pro</li>
+          <li>Hasta 5 usuarios</li>
+          <li>500 MB por propiedad</li>
+          <li>Branding corporativo en fichas</li>
+          <li>Panel de administración</li>
+          <li>Soporte dedicado</li>
+        </ul>
+        <button class="btn btn-secondary" style="width:100%;justify-content:center;" onclick="joinWaitlist()">Hablar con ventas</button>
+      </div>
+
+    </div>
+
+    <!-- Waitlist section -->
+    <div class="waitlist-section">
+      <div class="waitlist-title">Folio está en acceso anticipado</div>
+      <p class="waitlist-sub">Únete a la lista de espera. Los primeros 100 brokers obtienen 3 meses de Plan Pro a precio de lanzamiento.</p>
+
+      <div id="waitlistFormContainer">
+        <div class="waitlist-form">
+          <input class="waitlist-input" type="text" placeholder="Tu nombre" id="wlName">
+          <input class="waitlist-input" type="email" placeholder="Tu correo electrónico" id="wlEmail">
+          <button class="btn btn-accent btn-lg" onclick="submitWaitlist()" style="white-space:nowrap;">
+            Quiero acceso anticipado →
+          </button>
+        </div>
+        <div class="waitlist-counter">
+          <strong style="color:var(--primary-tint);">47 brokers</strong> ya están en la lista de espera
+        </div>
+      </div>
+
+      <div class="waitlist-success" id="waitlistSuccess">
+        <div style="font-size:28px;margin-bottom:8px;">🎉</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:6px;">¡Ya estás en la lista!</div>
+        <div style="font-size:14px;opacity:.9;margin-bottom:20px;">Te avisamos en cuanto abra el acceso. Revisa tu email: <span id="wlEmailConfirm"></span></div>
+        <a href="sample-ficha.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--primary-mid);color:white;padding:12px 24px;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;text-decoration:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Ver ficha técnica de ejemplo
+        </a>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--primary-deep);">Preguntas frecuentes</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Cuánto tiempo tarda en generarse una ficha técnica?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Menos de 60 segundos en condiciones normales. El tiempo depende del número de imágenes y documentos de la propiedad. Folio procesa todo de forma asíncrona — puedes seguir trabajando mientras se genera.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Puedo editar los datos que extrajo la IA?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Sí. Antes de generar la ficha, Folio te muestra todos los datos extraídos y te pide confirmación. Puedes editar cualquier campo. La IA propone, tú confirmas.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Qué formatos de archivo acepta Folio?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Imágenes: JPG, PNG, WEBP (hasta 10 MB cada una). Documentos: PDF de hasta 10 páginas y 25 MB. También puedes ingresar links de portales como Inmuebles24, Lamudi o Propiedades.com — Folio extrae el contenido directamente.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Las fichas técnicas llevan mi logo?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Sí. Puedes subir tu logo y color de marca en la sección de configuración. Todas las fichas generadas incluirán tu identidad visual. El Plan Agencia permite logo corporativo unificado para todos los agentes del equipo.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Puedo cancelar en cualquier momento?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">Absolutamente. Sin compromisos ni penalizaciones. Si cancelas, conservas acceso hasta el final del período pagado. Tus propiedades y fichas generadas se conservan por 90 días.</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:48px 0 16px;">
+      <a href="dashboard.html" class="btn btn-secondary">← Volver al dashboard</a>
+    </div>
+
+  </div>
+
+  <script>
+    let isAnnual = true;
+
+    function toggleBilling() {
+      isAnnual = !isAnnual;
+      const toggle = document.getElementById('toggle');
+      toggle.classList.toggle('annual', isAnnual);
+
+      if (isAnnual) {
+        document.getElementById('price-monthly').innerHTML = '$499 <span>MXN / mes</span>';
+        document.getElementById('price-annual').innerHTML = '$499 <span>MXN / mes</span>';
+        document.getElementById('desc-annual').textContent = 'Todo lo del plan Pro. Facturado anualmente ($5,988 MXN).';
+        document.getElementById('price-agency').innerHTML = '$1,899 <span>MXN / mes</span>';
+        document.getElementById('price-peruse').innerHTML = '$99 <span>MXN / ficha</span>';
+      } else {
+        document.getElementById('price-monthly').innerHTML = '$699 <span>MXN / mes</span>';
+        document.getElementById('price-annual').innerHTML = '$699 <span>MXN / mes</span>';
+        document.getElementById('price-agency').innerHTML = '$1,899 <span>MXN / mes</span>';
+      }
+    }
+
+    function joinWaitlist() {
+      document.querySelector('.waitlist-section').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => document.getElementById('wlEmail').focus(), 600);
+    }
+
+    function submitWaitlist() {
+      const name = document.getElementById('wlName').value.trim();
+      const email = document.getElementById('wlEmail').value.trim();
+
+      if (!email || !email.includes('@')) {
+        document.getElementById('wlEmail').focus();
+        document.getElementById('wlEmail').style.borderColor = 'var(--accent-deep)';
+        return;
+      }
+
+      document.getElementById('wlEmailConfirm').textContent = email;
+      document.getElementById('waitlistFormContainer').style.display = 'none';
+      document.getElementById('waitlistSuccess').style.display = 'block';
+    }
+
+    function toggleFaq(el) {
+      const answer = el.nextElementSibling;
+      const isOpen = answer.classList.contains('open');
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      if (!isOpen) answer.classList.add('open');
+    }
+  </script>
+
+</body>
+</html>

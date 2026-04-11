@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha Técnica — Departamento Polanco · Folio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1B3D2F;
+      --mid:     #2D7D62;
+      --tint:    #D4E8DF;
+      --accent:  #C4773B;
+      --canvas:  #F5F2EC;
+      --stone:   #DDD9D0;
+      --slate:   #6B7E78;
+      --white:   #FFFFFF;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--canvas);
+      color: var(--primary);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Print / download bar ── */
+    .action-bar {
+      background: var(--primary);
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .action-bar span { color: rgba(212,232,223,.8); font-size: 14px; }
+    .btn-print {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--mid);
+      color: white;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 180ms;
+    }
+    .btn-print:hover { background: #4A9E82; }
+    .btn-share {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.12);
+      color: rgba(212,232,223,.9);
+      border: 1px solid rgba(212,232,223,.25);
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ── Sheet wrapper ── */
+    .sheet {
+      max-width: 900px;
+      margin: 32px auto 64px;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(27,61,47,.12);
+    }
+    @media print {
+      .action-bar { display: none; }
+      .sheet { margin: 0; border-radius: 0; box-shadow: none; }
+      body { background: white; }
+    }
+
+    /* ── Header ── */
+    .sheet-header {
+      background: var(--primary);
+      padding: 36px 48px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .broker-info { }
+    .broker-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .broker-name { font-size: 15px; font-weight: 600; color: rgba(212,232,223,.9); }
+    .broker-contact { font-size: 13px; color: rgba(212,232,223,.65); margin-top: 2px; }
+    .sheet-meta { text-align: right; }
+    .sheet-type-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .sheet-date { font-size: 12px; color: rgba(212,232,223,.5); }
+
+    /* ── Gallery ── */
+    .gallery {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 260px 180px;
+      gap: 3px;
+    }
+    .gallery-main { grid-row: 1 / 3; }
+    .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-more {
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-more::after {
+      content: '+8 fotos';
+      position: absolute;
+      inset: 0;
+      background: rgba(27,61,47,.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    /* ── Body ── */
+    .sheet-body { padding: 40px 48px; }
+
+    .property-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      color: var(--primary);
+      margin-bottom: 6px;
+      line-height: 1.15;
+    }
+    .property-address {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      color: var(--slate);
+      margin-bottom: 28px;
+    }
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--stone);
+      flex-wrap: wrap;
+    }
+    .price-main {
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .price-currency { font-size: 18px; font-weight: 400; color: var(--slate); }
+    .price-per { font-size: 14px; color: var(--slate); }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    @media (max-width: 600px) { .specs-grid { grid-template-columns: repeat(2, 1fr); } }
+    .spec-box {
+      background: var(--canvas);
+      border: 1px solid var(--stone);
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+    }
+    .spec-box-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .spec-box-label { font-size: 12px; color: var(--slate); font-weight: 500; }
+
+    /* ── Two-column section ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 36px; }
+    @media (max-width: 680px) { .two-col { grid-template-columns: 1fr; } }
+
+    .section-title-sm {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--slate);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title-sm::before { content: ''; width: 16px; height: 2px; background: var(--accent); }
+
+    .description-text {
+      font-size: 15px;
+      color: var(--primary);
+      line-height: 1.75;
+    }
+
+    .features-list { list-style: none; }
+    .features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--primary);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--stone);
+    }
+    .features-list li:last-child { border-bottom: none; }
+    .features-list li::before {
+      content: '✓';
+      color: var(--mid);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Data table ── */
+    .detail-table { width: 100%; border-collapse: collapse; margin-bottom: 36px; }
+    .detail-table tr:nth-child(odd) td { background: var(--canvas); }
+    .detail-table td {
+      padding: 11px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--stone);
+    }
+    .detail-table td:first-child { font-weight: 600; width: 40%; color: var(--slate); }
+
+    /* ── CTA Section ── */
+    .cta-section {
+      background: var(--primary);
+      border-radius: 12px;
+      padding: 32px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .cta-text { }
+    .cta-title { font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .cta-sub { font-size: 14px; color: rgba(212,232,223,.75); }
+    .cta-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-wa {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-email {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.12);
+      color: rgba(212,232,223,.9);
+      border: 1px solid rgba(212,232,223,.25);
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ── Footer ── */
+    .sheet-footer {
+      border-top: 1px solid var(--stone);
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .folio-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--slate);
+    }
+    .folio-badge strong { color: var(--primary); }
+    .folio-badge a { color: var(--mid); text-decoration: none; }
+    .sheet-footer-meta { font-size: 12px; color: var(--slate); }
+  </style>
+</head>
+<body>
+
+  <!-- Action bar -->
+  <div class="action-bar">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(212,232,223,.7)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span>Ficha Técnica · Departamento Polanco · v2</span>
+    <div style="flex:1;"></div>
+    <button class="btn-share">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Compartir
+    </button>
+    <button class="btn-print" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir / Guardar PDF
+    </button>
+  </div>
+
+  <div class="sheet">
+
+    <!-- Header -->
+    <div class="sheet-header">
+      <div class="broker-info">
+        <div class="broker-logo">Carlos Medina</div>
+        <div class="broker-name">Broker Inmobiliario Independiente</div>
+        <div class="broker-contact">carlos@broker.mx · +52 55 1234 5678</div>
+      </div>
+      <div class="sheet-meta">
+        <div class="sheet-type-badge">Venta</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:rgba(255,255,255,.6);margin-bottom:4px;">Folio.</div>
+        <div class="sheet-date">Generada el 10 de abril, 2026</div>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery">
+      <div class="gallery-main">
+        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=900&h=500&fit=crop&auto=format" alt="Sala principal">
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=260&fit=crop&auto=format" alt="Comedor">
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=260&fit=crop&auto=format" alt="Cocina">
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=400&h=180&fit=crop&auto=format" alt="Recámara">
+      </div>
+      <div class="gallery-more">
+        <img src="https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=400&h=180&fit=crop&auto=format" alt="Baño">
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="sheet-body">
+
+      <div class="property-title">Departamento Polanco</div>
+      <div class="property-address">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Av. Presidente Masaryk 123, Polanco V Secc., Miguel Hidalgo, Ciudad de México, México
+      </div>
+
+      <div class="price-row">
+        <div>
+          <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);margin-bottom:4px;">Precio de venta</div>
+          <div style="display:flex;align-items:baseline;gap:8px;">
+            <span class="price-main">$4,800,000</span>
+            <span class="price-currency">MXN</span>
+          </div>
+          <div class="price-per">$50,526 USD aprox. · $50,526 MXN/m²</div>
+        </div>
+        <div style="width:1px;background:var(--stone);align-self:stretch;margin:0 8px;"></div>
+        <div>
+          <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);margin-bottom:4px;">Mantenimiento</div>
+          <div style="font-size:20px;font-weight:700;color:var(--primary);">$3,200 <span style="font-size:14px;font-weight:400;color:var(--slate);">MXN/mes</span></div>
+        </div>
+      </div>
+
+      <!-- Specs -->
+      <div class="specs-grid">
+        <div class="spec-box">
+          <div class="spec-box-value">95</div>
+          <div class="spec-box-label">m² construidos</div>
+        </div>
+        <div class="spec-box">
+          <div class="spec-box-value">2</div>
+          <div class="spec-box-label">Recámaras</div>
+        </div>
+        <div class="spec-box">
+          <div class="spec-box-value">2</div>
+          <div class="spec-box-label">Baños completos</div>
+        </div>
+        <div class="spec-box">
+          <div class="spec-box-value">1</div>
+          <div class="spec-box-label">Estacionamientos</div>
+        </div>
+      </div>
+
+      <!-- Two column -->
+      <div class="two-col">
+        <div>
+          <div class="section-title-sm">Descripción de la propiedad</div>
+          <p class="description-text">
+            Un departamento que no necesita presentación en la colonia que lo tiene todo. Ubicado en el corazón de Polanco — el epicentro del lujo residencial en la Ciudad de México — este espacio de 95 m² combina acabados de primera calidad con una distribución inteligente que maximiza cada metro cuadrado.
+          </p>
+          <br>
+          <p class="description-text">
+            Los pisos de madera de roble, la cocina integral equipada con línea blanca de alta gama, y los techos de 2.80 m crean un ambiente sofisticado y cálido a la vez. El balcón privado con vista a Masaryk es el espacio perfecto para el café matutino o el aperitivo de la tarde.
+          </p>
+          <br>
+          <p class="description-text">
+            Para el comprador que exige la mejor dirección postal de la ciudad, proporciona acceso inmediato a los restaurantes, boutiques y hoteles más exclusivos de CDMX.
+          </p>
+        </div>
+        <div>
+          <div class="section-title-sm">Amenidades del edificio</div>
+          <ul class="features-list">
+            <li>Seguridad 24 horas con acceso controlado</li>
+            <li>Gimnasio equipado con vista a la ciudad</li>
+            <li>Roof garden con área de asadores</li>
+            <li>Elevador de alta velocidad</li>
+            <li>Lobby con concierge</li>
+            <li>Sala de juntas privada</li>
+            <li>Cuarto de servicio</li>
+            <li>Bodega individual en sótano</li>
+            <li>Sistema de aire acondicionado central</li>
+            <li>Pet friendly (con restricciones)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Data table -->
+      <div class="section-title-sm" style="margin-bottom:16px;">Ficha técnica completa</div>
+      <table class="detail-table">
+        <tr><td>Tipo de inmueble</td><td>Departamento</td></tr>
+        <tr><td>Operación</td><td>Venta</td></tr>
+        <tr><td>Superficie construida</td><td>95 m²</td></tr>
+        <tr><td>Superficie terreno</td><td>N/A (departamento)</td></tr>
+        <tr><td>Recámaras</td><td>2 (principal con walk-in closet)</td></tr>
+        <tr><td>Baños completos</td><td>2</td></tr>
+        <tr><td>Medios baños</td><td>1</td></tr>
+        <tr><td>Estacionamientos</td><td>1 cubierto asignado</td></tr>
+        <tr><td>Piso</td><td>8° de 14</td></tr>
+        <tr><td>Antigüedad</td><td>6 años</td></tr>
+        <tr><td>Estado de conservación</td><td>Excelente</td></tr>
+        <tr><td>Precio por m²</td><td>$50,526 MXN</td></tr>
+        <tr><td>Mantenimiento mensual</td><td>$3,200 MXN (incluye agua y gas)</td></tr>
+        <tr><td>Predial anual</td><td>$18,400 MXN (aprox.)</td></tr>
+        <tr><td>Colonia</td><td>Polanco V Secc., Miguel Hidalgo</td></tr>
+        <tr><td>Código postal</td><td>11560</td></tr>
+        <tr><td>Tiempo de entrega</td><td>Inmediato</td></tr>
+      </table>
+
+      <!-- CTA -->
+      <div class="cta-section">
+        <div class="cta-text">
+          <div class="cta-title">¿Te interesa esta propiedad?</div>
+          <div class="cta-sub">Escríbeme para agendar una visita o resolver cualquier duda.</div>
+        </div>
+        <div class="cta-buttons">
+          <a href="https://wa.me/525512345678?text=Hola%20Carlos%2C%20vi%20la%20ficha%20del%20Departamento%20Polanco%20y%20me%20interesa." class="btn-wa" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.985-1.406A9.96 9.96 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.5a8.5 8.5 0 110-17 8.5 8.5 0 010 17z"/></svg>
+            WhatsApp
+          </a>
+          <a href="mailto:carlos@broker.mx?subject=Interés en Departamento Polanco" class="btn-email">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="sheet-footer">
+      <div class="folio-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mid)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+        Creado con <strong>Folio</strong> · <a href="index.html">The Ultimate Broker Kit</a>
+      </div>
+      <div class="sheet-footer-meta">Versión 2 · 10 de abril, 2026 · © Carlos Medina</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

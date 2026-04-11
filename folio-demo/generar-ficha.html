@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generar Ficha Técnica — Folio</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .property-summary {
+      background: var(--white);
+      border: 1px solid var(--stone);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .summary-thumb {
+      width: 120px;
+      height: 88px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .summary-details { flex: 1; }
+    .summary-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--primary-mid); margin-bottom: 3px; }
+    .summary-title { font-size: 18px; font-weight: 700; color: var(--primary-deep); margin-bottom: 4px; }
+    .summary-address { font-size: 13px; color: var(--slate); margin-bottom: 8px; }
+    .summary-specs { display: flex; gap: 16px; flex-wrap: wrap; }
+    .summary-spec { font-size: 13px; color: var(--slate); }
+    .summary-spec strong { color: var(--primary-deep); font-weight: 600; }
+
+    .prompt-examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .prompt-example {
+      background: var(--canvas);
+      border: 1px solid var(--stone);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--slate);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .prompt-example:hover { border-color: var(--primary-mid); color: var(--primary-mid); background: var(--primary-tint); }
+
+    .generation-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(27,61,47,.55);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .generation-modal.active { display: flex; }
+    .generation-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 48px 56px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+    }
+    .gen-logo { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--primary-deep); margin-bottom: 24px; }
+    .gen-subtitle { font-size: 14px; color: var(--slate); margin-top: 12px; line-height: 1.6; }
+    .gen-steps {
+      margin-top: 24px;
+      text-align: left;
+    }
+    .gen-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 13px;
+      color: var(--slate);
+    }
+    .gen-step.active { color: var(--primary-deep); font-weight: 500; }
+    .gen-step.done { color: var(--primary-mid); }
+    .gen-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--stone);
+      flex-shrink: 0;
+    }
+    .gen-step.active .gen-dot { background: var(--primary-mid); }
+    .gen-step.done .gen-dot { background: var(--primary-mid); }
+
+    .cost-preview {
+      background: var(--accent-tint);
+      border: 1px solid var(--accent-mid);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--accent-deep);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .history-card {
+      background: var(--white);
+      border: 1px solid var(--stone);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .history-version {
+      width: 36px;
+      height: 36px;
+      background: var(--primary-tint);
+      color: var(--primary-deep);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="navbar-logo">Folio<span>.</span></a>
+    <div class="navbar-spacer"></div>
+    <div class="navbar-user">
+      <span class="plan-badge">Pro</span>
+      <span style="font-size:14px; color: rgba(212,232,223,.8);">Carlos Medina</span>
+      <div class="navbar-avatar">CM</div>
+      <button class="btn-logout" onclick="window.location.href='index.html'">Salir</button>
+    </div>
+  </nav>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-label">Menú</div>
+      <div class="sidebar-section">
+        <a class="sidebar-item active" href="dashboard.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Propiedades
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Fichas técnicas
+        </a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--slate);text-decoration:none;margin-bottom:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Volver a mis propiedades
+      </a>
+
+      <!-- Property summary -->
+      <div class="property-summary">
+        <img class="summary-thumb" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=300&h=200&fit=crop&auto=format" alt="">
+        <div class="summary-details">
+          <div class="summary-type">Departamento · Venta</div>
+          <div class="summary-title">Departamento Polanco</div>
+          <div class="summary-address">Av. Presidente Masaryk 123, Polanco, CDMX</div>
+          <div class="summary-specs">
+            <div class="summary-spec"><strong>$4,800,000</strong> MXN</div>
+            <div class="summary-spec"><strong>95</strong> m²</div>
+            <div class="summary-spec"><strong>2</strong> rec</div>
+            <div class="summary-spec"><strong>2</strong> baños</div>
+            <div class="summary-spec"><strong>12</strong> fotos</div>
+            <div class="summary-spec"><strong>1</strong> PDF</div>
+          </div>
+        </div>
+        <span class="status-badge status-active">Datos confirmados</span>
+      </div>
+
+      <!-- Two-column layout -->
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;">
+
+        <!-- Main: prompt form -->
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;">Generar ficha técnica</h2>
+              <p style="font-size:14px;color:var(--slate);margin-bottom:24px;">Dile a Folio cómo quieres tu ficha. Claude se encarga del resto.</p>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Tu prompt
+                  <span style="font-weight:400;color:var(--slate)"> — escribe en español o inglés</span>
+                </label>
+                <textarea class="form-textarea" id="promptInput" style="min-height:140px;font-size:15px;" placeholder="Describe cómo quieres tu ficha técnica...">Quiero una ficha técnica enfocada en el lujo y la ubicación premium. El tono debe ser sofisticado y aspiracional, dirigida a compradores de alto perfil. Destaca Polanco como el epicentro del lujo en CDMX, los acabados de primera, y la seguridad del edificio. Incluye todos los datos técnicos al final. En español.</textarea>
+                <div class="form-hint">Puedes mencionar: tono, audiencia, idioma, énfasis, información a destacar o minimizar.</div>
+              </div>
+
+              <div class="prompt-examples">
+                <span class="prompt-example" onclick="setPrompt(this)">Familiar y cálido, para comprador joven</span>
+                <span class="prompt-example" onclick="setPrompt(this)">Minimalista, enfocado en datos técnicos</span>
+                <span class="prompt-example" onclick="setPrompt(this)">Para inversionista, énfasis en rentabilidad</span>
+                <span class="prompt-example" onclick="setPrompt(this)">En inglés para comprador extranjero</span>
+                <span class="prompt-example" onclick="setPrompt(this)">Para redes sociales, tono dinámico</span>
+              </div>
+
+              <div class="cost-preview">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Plan Pro — fichas ilimitadas incluidas. Esta generación <strong>no tiene costo adicional</strong>.</span>
+              </div>
+
+              <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;">
+                <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">Cancelar</button>
+                <button class="btn btn-primary btn-lg" onclick="startGeneration()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Generar ficha técnica
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar: history + tips -->
+        <div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-body">
+              <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);margin-bottom:14px;">Versiones anteriores</div>
+              <div class="history-card">
+                <div class="history-version">v1</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;color:var(--primary-deep);">Ficha de lujo — Español</div>
+                  <div style="font-size:12px;color:var(--slate);">Hace 3 días · 1,240 tokens</div>
+                </div>
+                <a href="sample-ficha.html" target="_blank" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;" title="Ver / Descargar PDF">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--slate)" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
+              </div>
+              <div style="font-size:12px;color:var(--slate);text-align:center;padding:8px 0;">La nueva versión se agregará aquí</div>
+            </div>
+          </div>
+
+          <div class="card" style="background:var(--primary-tint);border-color:var(--primary-light);">
+            <div class="card-body">
+              <div style="font-size:13px;font-weight:700;color:var(--primary-deep);margin-bottom:10px;">💡 Tips para mejores fichas</div>
+              <ul style="list-style:none;font-size:13px;color:var(--primary-deep);line-height:2;">
+                <li>✦ Menciona a quién va dirigida</li>
+                <li>✦ Indica el tono: formal, cálido, técnico</li>
+                <li>✦ Di si quieres énfasis en precio, ubicación o amenidades</li>
+                <li>✦ Puedes pedir el idioma que quieras</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Generation Modal -->
+  <div class="generation-modal" id="genModal">
+    <div class="generation-card">
+      <div class="gen-logo">Folio.</div>
+      <div class="spinner"></div>
+      <div style="font-size:18px;font-weight:700;color:var(--primary-deep);margin-top:4px;" id="genTitle">Claude está generando tu ficha...</div>
+      <div class="gen-subtitle" id="genSub">Esto toma menos de 60 segundos. Puedes esperar aquí.</div>
+
+      <div class="progress-bar-outer" style="margin-top:20px;">
+        <div class="progress-bar-inner" id="genProgress"></div>
+      </div>
+
+      <div class="gen-steps">
+        <div class="gen-step active" id="gs1"><div class="gen-dot"></div>Enriqueciendo el prompt con datos de la propiedad</div>
+        <div class="gen-step" id="gs2"><div class="gen-dot"></div>Claude redacta el contenido de la ficha</div>
+        <div class="gen-step" id="gs3"><div class="gen-dot"></div>Aplicando diseño y branding</div>
+        <div class="gen-step" id="gs4"><div class="gen-dot"></div>Generando PDF final</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Detect if this property is linked to a development
+    const params = new URLSearchParams(window.location.search);
+    const hasDesarrollo = params.get('desarrollo') === 'anfora';
+
+    // Inject development context UI on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (hasDesarrollo) {
+        // Badge in property summary
+        const summary = document.querySelector('.property-summary');
+        const badge = document.createElement('div');
+        badge.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--primary-tint);border:1px solid var(--primary-light);border-radius:8px;font-size:13px;font-weight:600;color:var(--primary-deep);white-space:nowrap;margin-top:4px;';
+        badge.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary-mid)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Torre Ánfora Polanco`;
+        summary.querySelector('.summary-details').appendChild(badge);
+
+        // Extra step in modal
+        document.getElementById('gs2').innerHTML = '<div class="gen-dot"></div>Incorporando datos de Torre Ánfora Polanco';
+
+        // Tip in sidebar
+        const tipCard = document.querySelector('.card[style*="primary-tint"] .card-body');
+        if (tipCard) {
+          const tip = document.createElement('p');
+          tip.style.cssText = 'font-size:13px;color:var(--primary-deep);margin-top:10px;padding-top:10px;border-top:1px solid var(--primary-light);line-height:1.6;';
+          tip.innerHTML = '<strong>Desarrollo vinculado:</strong> La ficha incluirá fotos, amenidades y descripción de Torre Ánfora en páginas adicionales.';
+          tipCard.appendChild(tip);
+        }
+      }
+    });
+
+    function setPrompt(el) {
+      const examples = {
+        'Familiar y cálido, para comprador joven': 'Quiero una ficha con tono cercano y moderno, para una pareja joven o familia que busca su primer departamento. Destaca el potencial del espacio, la ubicación en Polanco para el día a día y las amenidades del edificio. Tono cálido, nada pretencioso. En español.',
+        'Minimalista, enfocado en datos técnicos': 'Ficha técnica minimalista. Solo los datos clave sin texto de relleno: metros cuadrados, recámaras, baños, precio, ubicación exacta, amenidades del edificio. Una descripción de 2 oraciones máximo. Formato limpio para enviar por WhatsApp.',
+        'Para inversionista, énfasis en rentabilidad': 'Ficha dirigida a inversionistas inmobiliarios. Incluye precio por m², comparativa de zona Polanco, potencial de plusvalía, rendimiento estimado por renta y ubicación estratégica. Tono analítico y ejecutivo. En español.',
+        'En inglés para comprador extranjero': 'Generate a professional property sheet in English. Focus on the prestige of Polanco as Mexico\'s most exclusive neighborhood, comparable to Beverly Hills. Highlight the luxury finishes, 24/7 security, and proximity to high-end restaurants and boutiques. Professional tone for international buyers.',
+        'Para redes sociales, tono dinámico': 'Crea una ficha con copy impactante para Instagram y WhatsApp. Párrafos cortos, emojis estratégicos, destaca la exclusividad de Polanco. Termina con un call to action para agendar visita. Máximo 200 palabras.'
+      };
+      document.getElementById('promptInput').value = examples[el.textContent] || '';
+    }
+
+    function startGeneration() {
+      document.getElementById('genModal').classList.add('active');
+      runGenerationAnimation();
+    }
+
+    function runGenerationAnimation() {
+      const bar = document.getElementById('genProgress');
+      const steps = [
+        { id: 'gs1', time: 0 },
+        { id: 'gs2', time: 900 },
+        { id: 'gs3', time: 2000 },
+        { id: 'gs4', time: 3000 },
+      ];
+      const total = hasDesarrollo ? 4400 : 3800;
+      const start = Date.now();
+
+      const interval = setInterval(() => {
+        const elapsed = Date.now() - start;
+        bar.style.width = Math.min((elapsed / total) * 100, 99) + '%';
+
+        steps.forEach((step, i) => {
+          const el = document.getElementById(step.id);
+          if (elapsed >= step.time) {
+            steps.slice(0, i).forEach(s => {
+              const prev = document.getElementById(s.id);
+              prev.classList.remove('active');
+              prev.classList.add('done');
+              prev.querySelector('.gen-dot').style.background = 'var(--primary-mid)';
+            });
+            el.classList.add('active');
+          }
+        });
+
+        if (elapsed >= total) {
+          clearInterval(interval);
+          bar.style.width = '100%';
+          document.getElementById('genTitle').textContent = '¡Tu ficha está lista!';
+          document.getElementById('genSub').textContent = hasDesarrollo
+            ? 'Ficha con datos de propiedad + Torre Ánfora. Abriendo...'
+            : 'Abriendo tu ficha técnica en PDF...';
+          document.querySelector('.spinner').style.display = 'none';
+          const checkIcon = document.createElement('div');
+          checkIcon.innerHTML = `<div style="width:56px;height:56px;background:var(--primary-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>`;
+          document.querySelector('.generation-card').insertBefore(checkIcon, document.querySelector('.gen-logo').nextSibling);
+          setTimeout(() => {
+            const fichaUrl = hasDesarrollo ? 'sample-ficha-desarrollo.html' : 'sample-ficha.html';
+            window.open(fichaUrl, '_blank');
+            window.location.href = 'planes.html';
+          }, 1200);
+        }
+      }, 60);
+    }
+  </script>
+
+</body>
+</html>

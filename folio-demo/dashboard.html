@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Folio</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--stone);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      flex: 1;
+      min-width: 150px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--slate);
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-deep);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-change { font-size: 12px; color: var(--primary-mid); font-weight: 500; }
+    .property-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    @media (max-width: 1100px) { .property-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 700px) { .property-grid { grid-template-columns: 1fr; } }
+    .new-property-card {
+      border: 2px dashed var(--stone);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--white);
+      min-height: 280px;
+      text-decoration: none;
+    }
+    .new-property-card:hover {
+      border-color: var(--primary-mid);
+      background: var(--primary-tint);
+    }
+    .new-property-card .plus-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-tint);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      transition: var(--transition);
+    }
+    .new-property-card:hover .plus-icon { background: var(--primary-mid); }
+    .new-property-card:hover .plus-icon svg { stroke: var(--white); }
+    .new-property-card h3 { font-size: 15px; font-weight: 600; color: var(--primary-deep); margin-bottom: 6px; }
+    .new-property-card p { font-size: 13px; color: var(--slate); }
+    .property-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+      background: var(--stone);
+    }
+    .ficha-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary-mid);
+      background: var(--primary-tint);
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .ficha-dot { width: 6px; height: 6px; background: var(--primary-mid); border-radius: 50%; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="navbar-logo">Folio<span>.</span></a>
+    <div class="navbar-spacer"></div>
+    <div class="navbar-user">
+      <span class="plan-badge">Pro</span>
+      <span style="font-size:14px; color: rgba(212,232,223,.8);">Carlos Medina</span>
+      <div class="navbar-avatar">CM</div>
+      <button class="btn-logout" onclick="window.location.href='index.html'">Salir</button>
+    </div>
+  </nav>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-label">Menú</div>
+      <div class="sidebar-section">
+        <a class="sidebar-item active" href="dashboard.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Propiedades
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Fichas técnicas
+        </a>
+      </div>
+      <div class="sidebar-label" style="margin-top:16px">Cuenta</div>
+      <div class="sidebar-section">
+        <a class="sidebar-item" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Perfil
+        </a>
+        <a class="sidebar-item" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Facturación
+        </a>
+        <a class="sidebar-item" href="planes.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Mi plan
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-label">Propiedades activas</div>
+          <div class="stat-value">3</div>
+          <div class="stat-change">↑ 1 esta semana</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Fichas generadas</div>
+          <div class="stat-value">7</div>
+          <div class="stat-change">↑ 3 este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Visitas a MiniSites</div>
+          <div class="stat-value">124</div>
+          <div class="stat-change">↑ 18 esta semana</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Almacenamiento</div>
+          <div class="stat-value" style="font-size:22px">142 MB</div>
+          <div class="stat-change" style="color:var(--slate)">de 300 MB / propiedad</div>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="section-header">
+        <div>
+          <div class="section-title">Mis propiedades</div>
+          <div class="section-subtitle">Gestiona y genera fichas técnicas de tus propiedades</div>
+        </div>
+        <a href="nueva-propiedad.html" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nueva propiedad
+        </a>
+      </div>
+
+      <!-- Property Grid -->
+      <div class="property-grid">
+
+        <!-- New property card -->
+        <a href="nueva-propiedad.html" class="new-property-card">
+          <div class="plus-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-mid)" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+          <h3>Agregar propiedad</h3>
+          <p>Sube documentos e imágenes. La IA extrae todo automáticamente.</p>
+        </a>
+
+        <!-- Property 1 -->
+        <div class="property-card" onclick="window.location.href='generar-ficha.html?prop=polanco'">
+          <img class="property-img" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=360&fit=crop&auto=format" alt="Departamento Polanco" loading="lazy">
+          <div class="property-card-body">
+            <div class="property-card-type">Departamento · Venta</div>
+            <div class="property-card-title">Departamento Polanco</div>
+            <div class="property-card-address">Av. Masaryk 123, Polanco, CDMX</div>
+            <div class="property-card-price">$4,800,000 <span>MXN</span></div>
+            <div class="property-specs">
+              <div class="spec-item"><strong>2</strong> rec</div>
+              <div class="spec-item"><strong>2</strong> baños</div>
+              <div class="spec-item"><strong>95</strong> m²</div>
+              <div class="spec-item"><strong>1</strong> estac.</div>
+            </div>
+            <div class="property-card-footer">
+              <span class="status-badge status-active">Activa</span>
+              <span class="ficha-indicator">
+                <span class="ficha-dot"></span>
+                Ficha lista
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property 2 -->
+        <div class="property-card" onclick="window.location.href='generar-ficha.html?prop=santafe'">
+          <img class="property-img" src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&h=360&fit=crop&auto=format" alt="Casa Santa Fe" loading="lazy">
+          <div class="property-card-body">
+            <div class="property-card-type">Casa · Venta</div>
+            <div class="property-card-title">Casa Santa Fe</div>
+            <div class="property-card-address">Blvd. Ávila Camacho 1234, Santa Fe, CDMX</div>
+            <div class="property-card-price">$9,500,000 <span>MXN</span></div>
+            <div class="property-specs">
+              <div class="spec-item"><strong>4</strong> rec</div>
+              <div class="spec-item"><strong>3.5</strong> baños</div>
+              <div class="spec-item"><strong>280</strong> m²</div>
+              <div class="spec-item"><strong>2</strong> estac.</div>
+            </div>
+            <div class="property-card-footer">
+              <span class="status-badge status-active">Activa</span>
+              <span style="font-size:12px;color:var(--slate)">Sin ficha aún</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property 3 -->
+        <div class="property-card" onclick="window.location.href='generar-ficha.html?prop=condesa'">
+          <img class="property-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=360&fit=crop&auto=format" alt="Local Condesa" loading="lazy">
+          <div class="property-card-body">
+            <div class="property-card-type">Local comercial · Renta</div>
+            <div class="property-card-title">Local Condesa</div>
+            <div class="property-card-address">Av. Ámsterdam 88, La Condesa, CDMX</div>
+            <div class="property-card-price">$18,000 <span>MXN / mes</span></div>
+            <div class="property-specs">
+              <div class="spec-item"><strong>45</strong> m²</div>
+              <div class="spec-item"><strong>1</strong> baño</div>
+              <div class="spec-item">PB + Mezzanine</div>
+            </div>
+            <div class="property-card-footer">
+              <span class="status-badge status-active">Activa</span>
+              <span style="font-size:12px;color:var(--slate)">Sin ficha aún</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom CTA -->
+      <div style="margin-top:40px; padding:24px 32px; background:var(--primary-tint); border-radius:var(--radius-lg); border:1px solid var(--primary-light); display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <div>
+          <div style="font-size:16px; font-weight:700; color:var(--primary-deep); margin-bottom:4px;">¿Listo para generar tu primera ficha técnica?</div>
+          <div style="font-size:14px; color:var(--slate);">Selecciona una propiedad y genera una ficha profesional en menos de 60 segundos.</div>
+        </div>
+        <a href="generar-ficha.html" class="btn btn-primary">Generar ficha técnica →</a>
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>
