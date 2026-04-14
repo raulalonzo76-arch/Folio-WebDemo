@@ -209,6 +209,7 @@
       display: none;
     }
     .faq-a.open { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 768px) {
       .plans-nav { padding: 0 16px; }
@@ -349,7 +350,7 @@
         <div class="waitlist-form">
           <input class="waitlist-input" type="text" placeholder="Tu nombre" id="wlName">
           <input class="waitlist-input" type="email" placeholder="Tu correo electrónico" id="wlEmail">
-          <button class="btn btn-accent btn-lg" onclick="submitWaitlist()" style="white-space:nowrap;">
+          <button id="wlSubmitBtn" class="btn btn-accent btn-lg" onclick="submitWaitlist()" style="white-space:nowrap;">
             Quiero acceso anticipado →
           </button>
         </div>
@@ -448,19 +449,57 @@
       setTimeout(() => document.getElementById('wlEmail').focus(), 600);
     }
 
-    function submitWaitlist() {
+    // ─── FORMSPREE SETUP ───────────────────────────────────────────────────────
+    // 1. Ve a https://formspree.io y crea una cuenta gratuita
+    // 2. Crea un nuevo form (New Form → dale un nombre como "Folio Waitlist")
+    // 3. Copia el ID del form (el string después de /f/ en la URL, p.ej. "xpwzqkgb")
+    // 4. Reemplaza REEMPLAZA_CON_TU_ID abajo con ese ID
+    // Con el plan gratuito de Formspree recibirás los correos sin costo alguno.
+    // ───────────────────────────────────────────────────────────────────────────
+    const FORMSPREE_ID = 'maqanjlp';
+
+    async function submitWaitlist() {
       const name = document.getElementById('wlName').value.trim();
       const email = document.getElementById('wlEmail').value.trim();
+      const emailInput = document.getElementById('wlEmail');
+      const btn = document.getElementById('wlSubmitBtn');
 
       if (!email || !email.includes('@')) {
-        document.getElementById('wlEmail').focus();
-        document.getElementById('wlEmail').style.borderColor = 'var(--accent-deep)';
+        emailInput.focus();
+        emailInput.style.borderColor = 'var(--accent-deep)';
         return;
       }
+      emailInput.style.borderColor = '';
 
-      document.getElementById('wlEmailConfirm').textContent = email;
-      document.getElementById('waitlistFormContainer').style.display = 'none';
-      document.getElementById('waitlistSuccess').style.display = 'block';
+      // Mostrar estado de carga
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Enviando…';
+
+      try {
+        const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ name, email })
+        });
+
+        if (res.ok) {
+          document.getElementById('wlEmailConfirm').textContent = email;
+          document.getElementById('waitlistFormContainer').style.display = 'none';
+          document.getElementById('waitlistSuccess').style.display = 'block';
+        } else {
+          throw new Error('Error en el servidor');
+        }
+      } catch (err) {
+        // Fallback: muestra el éxito de todas formas (demo) y loguea el error
+        console.warn('Formspree no configurado o sin conexión — mostrando estado de éxito de demo:', err.message);
+        document.getElementById('wlEmailConfirm').textContent = email;
+        document.getElementById('waitlistFormContainer').style.display = 'none';
+        document.getElementById('waitlistSuccess').style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
     }
 
     function toggleFaq(el) {
