@@ -1,5 +1,53 @@
 /* Folio Demo — Shared Utilities */
 
+// ── Mobile sidebar toggle ──────────────────────────────────
+function initMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+
+  // Insert backdrop
+  const backdrop = document.createElement('div');
+  backdrop.className = 'sidebar-backdrop';
+  backdrop.addEventListener('click', closeSidebar);
+  document.body.appendChild(backdrop);
+
+  // Insert hamburger button into navbar
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    const btn = document.createElement('button');
+    btn.className = 'hamburger-btn';
+    btn.setAttribute('aria-label', 'Menú');
+    btn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+    btn.addEventListener('click', toggleSidebar);
+    navbar.insertBefore(btn, navbar.firstChild);
+  }
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.querySelector('.sidebar-backdrop');
+  const isOpen = sidebar && sidebar.classList.contains('open');
+  isOpen ? closeSidebar() : openSidebar();
+}
+
+function openSidebar() {
+  document.querySelector('.sidebar')?.classList.add('open');
+  document.querySelector('.sidebar-backdrop')?.classList.add('open');
+}
+
+function closeSidebar() {
+  document.querySelector('.sidebar')?.classList.remove('open');
+  document.querySelector('.sidebar-backdrop')?.classList.remove('open');
+}
+
+// Auto-close sidebar when a nav link is clicked on mobile
+document.addEventListener('click', e => {
+  if (e.target.closest('.sidebar-item')) closeSidebar();
+});
+
+// Init on DOM ready
+document.addEventListener('DOMContentLoaded', initMobileSidebar);
+
 // Simulate progress bar animation
 function animateProgress(selector, durationMs, onComplete) {
   const bar = document.querySelector(selector);

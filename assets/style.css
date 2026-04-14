@@ -629,3 +629,136 @@ h1, h2, h3 { line-height: 1.25; }
   justify-content: center;
   padding: 24px;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE — RESPONSIVE STYLES (< 768px)
+═══════════════════════════════════════════════════════════ */
+
+/* ─── Hamburger button (hidden on desktop) ─────────────── */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: var(--primary-tint);
+  flex-shrink: 0;
+}
+
+/* ─── Sidebar overlay backdrop ─────────────────────────── */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 199;
+}
+.sidebar-backdrop.open { display: block; }
+
+/* ─── Layout classes for inline grids (used in HTML) ───── */
+.two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+  align-items: start;
+}
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.stats-bar-grid {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.stats-bar-grid .stat-card { flex: 1; min-width: 140px; }
+
+@media (max-width: 768px) {
+
+  /* ── Navbar ── */
+  .navbar { padding: 0 16px; gap: 10px; }
+  .navbar-logo { font-size: 19px; }
+  .hamburger-btn { display: flex; }
+  /* Hide username text, keep avatar + plan badge + logout */
+  .navbar-user > span:not(.plan-badge) { display: none; }
+  .navbar-user { gap: 8px; }
+  .btn-logout { padding: 5px 10px; font-size: 12px; }
+  .plan-badge { font-size: 10px; padding: 2px 7px; }
+
+  /* ── Sidebar: hidden by default, slides in as drawer ── */
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 60px;
+    height: calc(100vh - 60px);
+    width: 240px;
+    z-index: 200;
+    transition: left 220ms ease;
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+  }
+  .sidebar.open { left: 0; }
+
+  /* ── App layout: full width without sidebar space ── */
+  .app-layout { display: block; }
+  .main-content { padding: 20px 16px; }
+
+  /* ── Section header ── */
+  .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .section-title { font-size: 20px; }
+
+  /* ── Stats bar: 2×2 grid ── */
+  .stats-bar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stats-bar-grid .stat-card { min-width: unset; }
+
+  /* ── Buttons: allow wrapping ── */
+  .btn-lg { padding: 12px 20px; font-size: 15px; }
+
+  /* ── Card body padding ── */
+  .card-body { padding: 16px; }
+
+  /* ── Step progress: smaller text ── */
+  .step-progress { gap: 0; margin-bottom: 24px; }
+  .step-item { gap: 5px; font-size: 12px; }
+  .step-connector { max-width: 32px; }
+  .step-num { width: 24px; height: 24px; font-size: 11px; }
+
+  /* ── Form rows collapse to 1 column ── */
+  .form-row { grid-template-columns: 1fr; }
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .form-grid-4 { grid-template-columns: 1fr 1fr; }
+
+  /* ── Two-col layout (generar-ficha) → stacked ── */
+  .two-col-grid { grid-template-columns: 1fr; }
+
+  /* ── Dropzone ── */
+  .dropzone { padding: 32px 16px; }
+
+  /* ── Processing overlay card ── */
+  .processing-card { padding: 28px 20px; }
+
+  /* ── Property card specs ── */
+  .property-specs { gap: 8px; }
+
+  /* ── Alert ── */
+  .alert { padding: 12px 14px; font-size: 13px; }
+}
+
+/* Extra small (< 420px) */
+@media (max-width: 420px) {
+  .step-item span { display: none; } /* show only number circles */
+  .step-connector { max-width: 20px; }
+  .navbar-user .btn-logout { display: none; } /* avatar acts as exit on tiny screens */
+}

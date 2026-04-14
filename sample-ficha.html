@@ -83,6 +83,19 @@
       .sheet { margin: 0; border-radius: 0; box-shadow: none; }
       body { background: white; }
     }
+    @media (max-width: 768px) {
+      .action-bar { padding: 10px 14px; gap: 8px; }
+      .action-bar span { display: none; }
+      .btn-share { display: none; }
+      .btn-print { padding: 8px 14px; font-size: 13px; }
+      .sheet { margin: 12px 0 40px; border-radius: 0; }
+      .sheet-header { padding: 22px 20px 18px; }
+      .broker-logo { font-size: 19px; }
+      .sheet-body { padding: 22px 18px; }
+      .sheet-footer { padding: 14px 18px; flex-direction: column; align-items: flex-start; gap: 6px; }
+      .cta-section { padding: 22px 18px; flex-direction: column; }
+      .cta-buttons { flex-direction: row; flex-wrap: wrap; }
+    }
 
     /* ── Header ── */
     .sheet-header {
@@ -122,10 +135,14 @@
     .gallery {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
-      grid-template-rows: 260px 180px;
+      grid-template-rows: 240px 160px;
       gap: 3px;
     }
     .gallery-main { grid-row: 1 / 3; }
+    @media (max-width: 560px) {
+      .gallery { grid-template-columns: 1fr 1fr; grid-template-rows: 160px 120px; }
+      .gallery-main { grid-row: unset; grid-column: 1 / 3; }
+    }
     .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .gallery-more {
       position: relative;

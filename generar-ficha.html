@@ -17,11 +17,17 @@
       align-items: flex-start;
     }
     .summary-thumb {
-      width: 120px;
-      height: 88px;
+      width: 100px;
+      height: 76px;
       object-fit: cover;
       border-radius: var(--radius);
       flex-shrink: 0;
+    }
+    @media (max-width: 480px) {
+      .summary-thumb { display: none; }
+      .property-summary { padding: 14px 16px; }
+      .summary-title { font-size: 16px; }
+      .two-col-grid { grid-template-columns: 1fr !important; }
     }
     .summary-details { flex: 1; }
     .summary-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--primary-mid); margin-bottom: 3px; }
@@ -188,7 +194,7 @@
       </div>
 
       <!-- Two-column layout -->
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;">
+      <div class="two-col-grid">
 
         <!-- Main: prompt form -->
         <div>
@@ -380,6 +386,6 @@
       }, 60);
     }
   </script>
-
+  <script src="assets/demo.js"></script>
 </body>
 </html>
